@@ -15,6 +15,12 @@
 from launch import LaunchDescription
 from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessExit
+# Included for RP-LIDAR
+import os
+from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from ament_index_python.packages import get_package_share_directory
+# ####################
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution
 
 from launch_ros.actions import Node
@@ -33,6 +39,22 @@ def generate_launch_description():
         ]
     )
     robot_description = {"robot_description": robot_description_content}
+
+# ##################### RP-LIDAR LAUCH DEFINITION ################
+
+    # Include the RP-Lidar Launch File so it starts automatically
+    # At robot's lauch file call
+     
+    package_Name='my_bot' #<--- CHANGE ME
+ 
+    rplidar = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory(package_Name),'launch','rplidar.launch.py'
+                )]), launch_arguments={'frame_id': 'laser'}.items()
+    )
+
+# ################################################################
+
 
     robot_controllers = PathJoinSubstitution(
         [
@@ -102,6 +124,7 @@ def generate_launch_description():
         joint_state_broadcaster_spawner,
         delay_rviz_after_joint_state_broadcaster_spawner,
         delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
+        rplidar,
     ]
 
     return LaunchDescription(nodes)
