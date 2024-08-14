@@ -50,7 +50,7 @@ def generate_launch_description():
     rplidar = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory(package_Name),'launch','rplidar.launch.py'
-                )]), launch_arguments={'frame_id': 'laser'}.items()
+                )]), launch_arguments={'serial_baudrate': '115200'}.items()
     )
 
 # ################################################################
